@@ -7,8 +7,9 @@
 
 const int width = 800;
 const int height = 800;
-
+double xpos, ypos;
 float* pixels = new float[width*height * 3];
+
 
 
 void drawLine(const int& i0, const int& j0, const int& i1, const int& j1, const float& red, const float& green, const float& blue);
@@ -30,7 +31,9 @@ public:
 	int end_x;
 	virtual void draw()
 	{
-		drawCirclenew(start_x, end_x, 1.0f, 0.0f, 0.0f);
+	
+			drawCirclenew(start_x, end_x, 1.0f, 0.0f, 0.0f);
+	
 	}
 };
 
@@ -233,15 +236,31 @@ void drawCircle(const int& i0, const int& j0, const float& red, const float& gre
 }
 void drawCirclenew(const int& i0, const int& j0, const float& red, const float& green, const float& blue)
 {
-	int r = 65; //원의 반지름 
-	for (int i = i0 - r; i < i0 + r; i++) {
-		for (int j = j0 - r; j < j0 + r; j++) {
-			int n = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - r*r);
-			int m = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - (r - 1)*(r - 1));
-			if (n < 0 && m>0) //두 원의 사이 
-				drawPixel(i, j, red, green, blue);
+	int r = 65;
+	if ((xpos - i0)*(xpos - i0) + (ypos - j0)*(ypos - j0) - (r*r)<0)
+	{
+		for (int i = i0 - r; i < i0 + r; i++)
+		{
+			for (int j = j0 - r; j < j0 + r; j++)
+			{
+				int n = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - r*r);
+				int m = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - (r - 1)*(r - 1));
+				if (n < 0 && m>0)
+					drawPixel(i, j, 0.0f, 0.0f, 0.0f);
+			}
 		}
 	}
+	else 
+		for (int i = i0 - r; i < i0 + r; i++)
+		{
+			for (int j = j0 - r; j < j0 + r; j++)
+			{
+				int n = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - r*r);
+				int m = ((i - i0)*(i - i0) + (j - j0)*(j - j0) - (r - 1)*(r - 1));
+				if (n < 0 && m>0)
+					drawPixel(i, j, 1.0f, 0.0f, 0.0f);
+			}
+		}
 }
 
 void drawIcon1(const int& i0, const int& j0, const float& red, const float& green, const float& blue)
@@ -392,27 +411,27 @@ void drawOnPixelBuffer()
 
 
 	for (int i = 0; i < 40; i++)
-	
+
 		my_objects[i]->draw();
-	
-	
+
+
 	//TODO: try moving object
 }
 
 int main(void)
 {
 
-	
+
 	for (int i = 0; i < 2; i++)
 	{
 		my_objects[i] = new Box(50 + 100 * i*i, 150, 100 + 100 * i* i, 200);
-		
 
-			GeometricObject *geo = new GeometricObject;
-			geo->start_x = 75 + 100 * i*i;
-			geo->end_x = 175;
-			my_objects[i+20] = geo;		
-	
+
+		GeometricObject *geo = new GeometricObject;
+		geo->start_x = 75 + 100 * i*i;
+		geo->end_x = 175;
+		my_objects[i + 20] = geo;
+
 		//my_boxese[i]->initialize(i*20, 50, 50+50*i, 100);
 	}
 
@@ -427,7 +446,7 @@ int main(void)
 		my_objects[i] = temp;
 
 		GeometricObject *geo = new GeometricObject;
-		geo->start_x = 65 + 50 * (i*i-1);
+		geo->start_x = 65 + 50 * (i*i - 1);
 		geo->end_x = 75;
 		my_objects[i + 20] = geo;
 	}
@@ -537,7 +556,7 @@ int main(void)
 		my_objects[i] = temp;
 
 		GeometricObject *geo = new GeometricObject;
-		geo->start_x = 150 * (i - 15)-50;
+		geo->start_x = 150 * (i - 15) - 50;
 		geo->end_x = 660;
 		my_objects[i + 20] = geo;
 	}
@@ -578,6 +597,7 @@ int main(void)
 							  /* Loop until the user closes the window */
 	while (!glfwWindowShouldClose(window))
 	{
+		glfwGetCursorPos(window, &xpos, &ypos);
 		/* Render here */
 		//glClear(GL_COLOR_BUFFER_BIT);
 
